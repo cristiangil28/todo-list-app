@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Categorías</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleForm()">
+        <ion-icon slot="icon-only" [name]="showForm ? 'close-circle' : 'add-circle'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <app-category-form *ngIf="showForm" [categoryToEdit]="categoryToEdit" (create)="onCreate($event)"
+    (update)="onUpdate($event)">
+  </app-category-form>
+  <ng-container *ngIf="categories$ | async as categories">
+    <ion-card *ngFor="let cat of categories ; trackBy: trackById">
+      <ion-card-content class="ion-justify-content-between ion-align-items-center ion-no-padding">
+        <div class="ion-padding">
+          <ion-label>
+            <h2>{{ cat.name }}</h2>
+          </ion-label>
+        </div>
+
+        <div class="ion-text-right ion-padding">
+          <ion-button fill="clear" color="primary" (click)="onEdit(cat)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="onDelete(cat.id)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+  <div class="pagination">
+    <ion-button (click)="loadPreviousPage()" [disabled]="page === 0" color="medium" fill="outline">
+      <ion-icon slot="start" name="arrow-back"></ion-icon>
+      Anterior
+    </ion-button>
+
+    <ion-text class="ion-text-center">
+      Página {{ page + 1 }} de {{ totalPages }} <br>
+      <small>Total: {{ totalCategories }} categorías</small>
+    </ion-text>
+
+    <ion-button (click)="loadNextPage()" [disabled]="!hasNextPage()" color="primary" fill="solid">
+      Siguiente
+      <ion-icon slot="end" name="arrow-forward"></ion-icon>
+    </ion-button>
+  </div>
+</ion-content>

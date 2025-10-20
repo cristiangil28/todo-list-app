@@ -1,0 +1,8 @@
+{
+  "name": "todo-list-app",
+  "integrations": {
+    "capacitor": {},
+    "cordova": {}
+  },
+  "type": "angular"
+}

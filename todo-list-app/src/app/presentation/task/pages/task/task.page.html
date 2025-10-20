@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Tareas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleForm()" slot="end">
+        <ion-icon slot="icon-only" [name]="showForm ? 'close-circle' : 'add-circle'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item lines="full">
+    <ion-label position="stacked">Categoría</ion-label>
+    <ion-select
+      [(ngModel)]="selectedCategoryId"
+      (ionChange)="onCategoryChange($event.detail.value)">
+      <ion-select-option value="">Todas</ion-select-option>
+      <ion-select-option *ngFor="let cat of categories$ | async" [value]="cat.id">
+        {{ cat.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <app-task-form *ngIf="showForm" (create)="onCreate($event)"></app-task-form>
+  <ng-container *ngIf="tasks$ | async as tasks">
+    <ion-card *ngFor="let task of tasks; trackBy: trackById" [class.completed]="task.completed">
+      <ion-card-header>
+        <ion-card-title>{{ task.title }}</ion-card-title>
+        <ion-card-subtitle>{{ task.description }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p>
+          <strong>Estado:</strong>
+          <ion-badge [color]="task.completed ? 'success' : 'warning'">
+            {{ task.completed ? 'Completada' : 'Pendiente' }}
+          </ion-badge>
+        </p>
+
+        <ion-chip color="tertiary" outline="true">
+          <ion-icon name="pricetag-outline"></ion-icon>
+          <ion-label>{{ task.categoryId | categoryName: ((categories$ | async) || []) }}</ion-label>
+        </ion-chip>
+
+        <div class="ion-text-right">
+          <ion-button fill="clear" color="success" (click)="onComplete(task.id)" [disabled]="task.completed">
+            <ion-icon slot="icon-only" name="checkmark-done"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="onDelete(task.id)" [disabled]="task.completed">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+  <div class="pagination">
+    <ion-button (click)="loadPreviousPage()" [disabled]="page === 0" color="medium" fill="outline">
+      <ion-icon slot="start" name="arrow-back"></ion-icon>
+      Anterior
+    </ion-button>
+
+    <ion-text class="ion-text-center">
+      Página {{ page + 1 }} de {{ totalPages }} <br>
+      <small>Total: {{ totalTasks }} tareas</small>
+    </ion-text>
+
+    <ion-button (click)="loadNextPage()" [disabled]="!hasNextPage()" color="primary" fill="solid">
+      Siguiente
+      <ion-icon slot="end" name="arrow-forward"></ion-icon>
+    </ion-button>
+  </div>
+
+</ion-content>

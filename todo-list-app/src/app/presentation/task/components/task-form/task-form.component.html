@@ -1,0 +1,35 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Agregar Tarea</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-item>
+      <ion-label position="floating">Título</ion-label>
+      <ion-input [(ngModel)]="title"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea [(ngModel)]="description"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Categoría</ion-label>
+      <ion-select [(ngModel)]="categoryId" interface="popover">
+        <ion-select-option *ngFor="let cat of categories$ | async" [value]="cat.id">
+          {{ cat.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-button fill="clear" size="small" (click)="toggleCategoryForm()">
+      <ion-icon slot="icon-only" [name]="showCategoryForm ? 'close-circle-outline' : 'add-circle-outline'"></ion-icon>
+    </ion-button>
+
+    <app-category-form
+      *ngIf="showCategoryForm"
+      (create)="onCreateCategory($event)">
+    </app-category-form>
+    <ion-button expand="block" (click)="onSubmit()">Guardar</ion-button>
+  </ion-card-content>
+</ion-card>
